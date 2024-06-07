@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: flight-management-postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: flightmanagement
+    ports:
+      - "5432:5432"
+    networks:
+      - flight-management-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flight-management-app
+    environment:
+      JWT_SECRET: your_jwt_secret
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: user
+      DATABASE_PASS: pass
+      DATABASE_NAME: flightmanagement
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    networks:
+      - flight-management-network
+
+networks:
+  flight-management-network:
+    driver: bridge
